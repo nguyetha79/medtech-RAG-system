@@ -17,7 +17,7 @@ class LLMGenerator:
         self.temperature = temperature
         self.rag_prompt_template = rag_prompt_template
 
-    def build_prompt(self, query: str, contexts: list[RetrievedChunk], history: list, verbose: bool = False,) -> str:
+    def build_prompt(self, query: str, contexts: list[RetrievedChunk], history: list) -> str:
         """Builds the prompt for the LLM using the query and retrieved contexts."""
         context_parts: list[str] = [
             f"[Document {chunk.rank}] {chunk.text}" for chunk in contexts
@@ -35,22 +35,6 @@ class LLMGenerator:
             context=context,
             question=query,
         )
-
-        if verbose:
-            print("=" * 60)
-            print("RETRIEVED CHUNKS")
-            print("=" * 60)
-            for chunk in contexts:
-                print(f"  Rank {chunk.rank} | score={chunk.score:.3f}")
-                print(textwrap.fill(chunk.text, width=70,
-                                    initial_indent="    ",
-                                    subsequent_indent="    "))
-                print()
-            print("=" * 60)
-            print("PROMPT SENT TO LLM")
-            print("=" * 60)
-            print(prompt)
-            print("=" * 60)
         return prompt
 
     def generate(self, prompt: str) -> str:
