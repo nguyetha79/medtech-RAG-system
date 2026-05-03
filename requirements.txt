@@ -1,0 +1,15 @@
+transformers
+accelerate
+langchain
+langchain-community
+langchain-text-splitters
+chromadb
+pdfplumber
+pydantic
+sympy
+gradio
+ollama
+sentence-transformers
+ragas
+seaborn 
+matplotlib
