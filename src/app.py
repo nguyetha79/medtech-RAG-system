@@ -1,17 +1,42 @@
 from rag_pipeline import RAGPipeline
 import gradio as gr
 
+"""
+RAG User Interface implementation
+
+Retrieved from:
+https://github.com/ed-donner/llm_engineering/blob/main/week5/app.py
+
+Author: Edward Donner
+Licensed under MIT
+"""
+
 rag_pipeline = RAGPipeline()
 
-def format_context(context_chunks):
-    result = "<h2 style='color: #ff7800;'>Relevant Context</h2>\n\n"
-    for i, chunk in enumerate(context_chunks):
+def format_context(context_chunks) -> str:
+    """Format retrieved context chunks into HTML for display
+
+    Args:
+        context_chunks: List of context chunk objects with rank, score, and text
+
+    Returns:
+        str: Formatted HTML string displaying the context chunks
+    """
+    for chunk in enumerate(context_chunks):
         result += f"<span style='color: #ff7800;'>Chunk {chunk.rank} (Score: {chunk.score:.2f})</span>\n\n"
         result += chunk.text + "\n\n"
     return result
 
-def chat(history):
-    last_user_message = history[-1]["content"]
+
+def chat(history) -> tuple[list, str]:
+    """Process a chat message and generate a response using the RAG pipeline
+
+    Args:
+        history: List of chat history dictionaries with 'role' and 'content'
+
+    Returns:
+        tuple: Updated history list and formatted context string
+    """
 
     if isinstance(last_user_message, dict):
         last_user_message = str(last_user_message.get("text", ""))
@@ -22,7 +47,7 @@ def chat(history):
 
     # Convert Gradio history (list of dicts) to RAG pipeline history (list of tuples)
     rag_chat_history = []
-    for i in range(0, len(history) - 1, 2): # Iterate over prior user-assistant pairs
+    for i in range(0, len(history) - 1, 2): 
         if history[i]["role"] == "user" and history[i+1]["role"] == "assistant":
             rag_chat_history.append((history[i]["content"], history[i+1]["content"]))
 
@@ -35,14 +60,15 @@ def chat(history):
 
     return history, formatted_context
 
+
 def main():
-    def put_message_in_chatbot(message, history):
+    def put_message_in_chatbot(message, history) -> tuple[str, list]:
         return "", history + [{"role": "user", "content": message}]
 
     theme = gr.themes.Soft(font=["Inter", "system-ui", "sans-serif"])
 
-    with gr.Blocks(title="MedTechs Expert Assistant") as ui:
-        gr.Markdown("# 🏢 MedTechs Expert Assistant\nAsk me anything about Troubleshooting!")
+    with gr.Blocks(title="MedTech's Expert Assistant") as ui:
+        gr.Markdown("# 🏢 MedTech's Expert Assistant\nAsk me anything about Troubleshooting!")
 
         with gr.Row():
             with gr.Column(scale=1):
