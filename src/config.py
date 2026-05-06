@@ -1,3 +1,10 @@
+"""
+Configuration module for the MedTech RAG system
+
+Defines file paths, system constants, and prompt templates used
+throughout the application
+"""
+
 PDF_PATH: str = "data/raw/medtech_documents.pdf"
 CHROMA_PATH: str = "data/chroma_db"
 

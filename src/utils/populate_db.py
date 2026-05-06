@@ -2,28 +2,62 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_core.documents import Document
 
+"""
+Vector Database implementation
+
+Retrieved from:
+https://github.com/pixegami/rag-tutorial-v2
+
+Author: pixigami
+"""
+
 class VectorStore:
-    def __init__(self, embedding_model_id: str, chroma_path: str, k: int):
+    """Vector store manager using Chroma and HuggingFace embeddings
+
+    Handles embedding generation, database creation, document addition,
+    and similarity search operations
+    """
+
+    def __init__(self, embedding_model_id: str, chroma_path: str, k: int) -> None:
         self.embedding_model_id = embedding_model_id
         self.chroma_path = chroma_path
         self.k = k
         self.embedding_function = self._get_embedding_function()
         self.vector_db = self._create_chroma_db()
 
-    def _get_embedding_function(self):
+    def _get_embedding_function(self) -> HuggingFaceEmbeddings:
+        """Create the embedding function
+
+        Returns:
+            HuggingFaceEmbeddings: Configured embedding function
+        """
         embeddings = HuggingFaceEmbeddings(
             model_name=self.embedding_model_id
         )
         
         return embeddings
 
-    def _create_chroma_db(self):
+    def _create_chroma_db(self) -> Chroma:
+        """Create or load the Chroma vector database
+
+        Returns:
+            Chroma: Initialized Chroma vector store
+        """
         return Chroma(
             persist_directory=self.chroma_path,
             embedding_function=self.embedding_function
         )
 
     def _calculate_chunk_ids(self, chunks: list[Document]) -> list[Document]:
+        """Calculate unique IDs for document chunks
+
+        Args:
+            chunks (list[Document]): List of document chunks
+
+        Returns:
+            list[Document]: Chunks with added ID metadata
+        """
+
         last_page_id = None
         current_chunk_index = 0
 
@@ -47,6 +81,11 @@ class VectorStore:
         return chunks
 
     def add_docs_to_db(self, chunks: list[Document]):
+        """Add new documents to the vector database
+
+        Args:
+            chunks (list[Document]): List of document chunks to add
+        """
         chunks_with_ids = self._calculate_chunk_ids(chunks)
 
         try:
@@ -70,14 +109,21 @@ class VectorStore:
             print("No new documents to add")
 
     def query_db(self, query_text: str) -> list[tuple[Document, float]]:
-        """Queries the vector database for relevant documents and their scores."""
+        """Query the vector database for relevant documents
+
+        Args:
+            query_text (str): The query string
+
+        Returns:
+            list[tuple[Document, float]]: List of document-score tuples
+        """
         results = self.vector_db.similarity_search_with_score(query_text, k=self.k)
         return results
 
     def clear_db(self):
+        """Clear the vector database collection"""
         if self.vector_db and self.vector_db.get(include=[])["ids"]:
-            # Only delete if the collection actually exists and has items
             self.vector_db.delete_collection()
-            print("Chroma database collection cleared.")
+            print("Chroma database collection cleared")
         else:
-            print("Chroma database is empty or not initialized.")
+            print("Chroma database is empty or not initialized")
