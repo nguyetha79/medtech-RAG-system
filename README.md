@@ -102,7 +102,7 @@ project-root/
 └── README.md 
 ```
 
-- `src/app.py` — Gradio interface and chat routing
+- `src/app.py` - Gradio interface and chat routing
 - `src/rag_pipeline.py` — pipeline orchestration and query flow
 - `src/engine/generate.py` — prompt construction and LLM interaction
 - `src/engine/retrieve.py` — similarity-based retrieval workflow
@@ -114,3 +114,5 @@ project-root/
 ## License
 
 This project is licensed under the MIT License.
+
+Nguyet Ha Phung - Beyza Simsek
