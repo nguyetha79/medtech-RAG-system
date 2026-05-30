@@ -111,6 +111,13 @@ project-root/
 - `data/` — raw documents and generated Chroma database files
 - `eval/` — evaluation artifacts and notebooks
 
+## Evaluation
+- **Great Retrieval Performance**: Perfect precision & high recall show the system finds the right information
+- **Strong Grounding & Reliability**: Faithfullness score indicated low hallucination risks 
+- **Room for improvement in Answer Quaility**: At 0.81  suggest srong alignment but highlights opportunities for refinement
+![Rag System Architecture](eval/output_images/overall_avg_scores.png)
+
+
 ## License
 
 This project is licensed under the MIT License.
